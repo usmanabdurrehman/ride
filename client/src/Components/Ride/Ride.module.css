@@ -1,0 +1,25 @@
+.ride{
+	background-color: #F18701;
+	border-radius: 4px 0 4px 0;
+	padding:10px;
+	box-shadow:3px 3px 7px lightgray;
+	color:white;
+	display: flex;
+	font-size: 14px;
+}
+
+.address{
+	flex:1;
+}
+
+.chevronWrapper{
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	width:25px;
+	cursor: pointer;
+}
+
+.ride a{
+	color:white;
+}

@@ -1,0 +1,18 @@
+.ride{
+	padding-top:20px;
+}
+
+.rideInfo{
+	margin:20px 0;
+	background-color: #F18701;
+	color:white;
+	border-radius: 12px 0 12px 0;
+	box-shadow: 3px 3px 7px lightgray;
+	padding:10px 20px;
+}
+
+.seperator{
+	background-color:#F35B04;
+	height:4px;
+	border-radius: 4px 4px 0 0;
+}

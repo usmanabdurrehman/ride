@@ -1,0 +1,36 @@
+.home{
+	padding-top:10px;
+}
+
+.profileInfo{
+	border-radius: 12px 0 12px 0;
+	box-shadow: 3px 3px 7px lightgray;
+	background-color: purple;
+	color:white;
+	padding:10px 20px;
+}
+
+.profileInfo>h2{
+	margin:0;
+}
+
+.badges{
+	margin-top: 15px;
+}
+
+.badge{
+	height:24px;
+	width:24px;
+}
+
+.skeletonWrapper{
+
+}
+
+.skeleton{
+	margin:10px 0;
+}
+
+.rides>div+div{
+	margin-top:15px;
+}

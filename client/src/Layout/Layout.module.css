@@ -1,0 +1,11 @@
+.layout{
+	min-height: 100vh;
+	position: relative;
+	padding-top:10px;
+}
+
+.fab{
+	position: fixed !important;
+	bottom:20px;
+	right:20px;
+}
