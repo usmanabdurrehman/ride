@@ -49,7 +49,7 @@ router.post('/signup',upload.any(),(req,res)=>{
 	var salt = bcrypt.genSaltSync(10);
 	var hash = bcrypt.hashSync(password, salt);
 
-	console.log(req.filename)
+	console.log(req.filename,req)
 
 	let newUser = new User({
 		name,
