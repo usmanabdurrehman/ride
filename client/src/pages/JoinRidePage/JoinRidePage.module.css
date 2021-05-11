@@ -1,0 +1,7 @@
+.joinARide{
+	margin-top: 25px;
+}
+
+.rides>div+div{
+	margin-top: 10px;
+}

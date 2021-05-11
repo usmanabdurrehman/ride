@@ -4,6 +4,21 @@ let Ride = require('../Models/Ride')
 let bcrypt = require('bcryptjs')
 let multer = require('multer')
 
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/profileImages')
+  },
+  filename: function (req, file, cb) {
+  	let [filename,ext] = file.originalname.split('.')
+  	console.log(file)
+  	console.log(req.body)
+  	req.filename = `${Date.now()}.${ext}`
+    cb(null, req.filename)
+  }
+})
+ 
+var upload = multer({ storage: storage })
+
 /*
 	Rides
 */
@@ -31,7 +46,7 @@ router.get('/getRidesOfUser',(req,res)=>{
 	let user = req.user
 	console.log(user)
 
-	Ride.find({'carPoolingParticipants':user.email}).lean()
+	Ride.find({$or:[{'carPoolingParticipants':user.email},{rider:user.email}]}).lean()
 	.then(rides=>{
 		console.log(user)
 		console.log(rides)
@@ -64,9 +79,13 @@ router.get('/canCarPool',(req,res)=>{
 
 	Ride.find({'carPoolingParticipants':user.email}).lean()
 	.then(rides=>{
-		if((rides.length==1 && ((new Date - new Date(rides[0].createAt))/(1000*60*60*24)>7)) || !rides){
+		console.log(rides)
+		// console.log((new Date - new Date(rides[0].createdAt))/(1000*60*60*24))
+		if((rides?.length==1 && ((new Date - new Date(rides[0].createdAt))/(1000*60*60*24)>7)) || !rides?.length){
+			console.log("allowed")
 			return res.send({canCarPool:true,status:true})
 		}else{
+			console.log("not allowed")
 			return res.send({canCarPool:false,status:true})
 		}
 	})
@@ -86,7 +105,7 @@ router.post('/createRide',(req,res)=>{
 	let {from,to,carPoolingParticipants} = req.body
 
 	let newRide = new Ride({
-		from,to,carPoolingParticipants,start:Date.now()
+		from,to,carPoolingParticipants,start:Date.now(),rider:user.email
 	})
 
 	newRide.save()
@@ -113,7 +132,7 @@ router.post('/endRide',(req,res)=>{
 		end: Date.now()
 	}
 
-	Ride.findByIdAndUpdate(id,updatedItem)
+	Ride.findByIdAndUpdate(id,updatedItem,{new: true})
 	.then(ride=>{
 		res.send({
 			status:true,
@@ -149,23 +168,61 @@ router.post('/getUser',(req,res)=>{
 	})
 })
 
-// tested
-router.post('/updateUser',(req,res)=>{
+router.get('/getLoggedInUser',(req,res)=>{
 
-	let {id,name,email,ownsCar,isCarPoolingRightNow,isVerified,isLongTermUser} = req.body
+	let user = req.user
+
+	User.findById(user._id).lean()
+	.then(user=>{
+		res.send({user,status:true})
+	})
+	.catch(err=>{
+		res.send({
+			status:false,
+			msg:'Some unexpected error occured'
+		})
+	})
+})
+
+
+router.post('/getUsersWithParticularEmail',(req,res)=>{
+
+	let {email} = req.body
+	User.find({email:new RegExp(email,'i')}).limit(10).lean()
+	.then(users=>{
+		console.log(users)
+		console.log(users.filter(user=>user!=user.email))
+		res.send({users:users.filter(user=>user.email!=req.user.email).map(user=>({name:user.email})),status:true})
+	})
+	.catch(err=>{
+		res.send({
+			status:false,
+			msg:'Some unexpected error occured'
+		})
+	})
+})
+
+// tested
+router.post('/updateUser', upload.any(),(req,res)=>{
+
+	let {id,name,email,ownsCar,bio,isCarPoolingRightNow,isVerified,isLongTermUser} = req.body
 
 	let updateUser = {
 		name,
 		email,
 		isMember:ownsCar,
+		bio,
 		isCarPoolingRightNow,
 		isVerified,
-		isLongTermUser
+		isLongTermUser,
+		image:req.filename
 	}
+
+	console.log(req.filename)
 
 	Object.keys(updateUser).forEach((k) => !updateUser[k] && delete updateUser[k]);
 
-	User.findByIdAndUpdate(id,updateUser).lean()
+	User.findByIdAndUpdate(id,updateUser,{new: true}).lean()
 	.then(user=>{
 		res.send({user,status:true})
 	})

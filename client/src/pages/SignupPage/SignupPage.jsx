@@ -14,11 +14,6 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
 export default function Signup() {
-	const [age, setAge] = React.useState("");
-
-	const handleChange = (event) => {
-		setAge(event.target.value);
-	};
 
 	let [fields, setFields] = useState({
 		name: "",
@@ -27,7 +22,7 @@ export default function Signup() {
 		address: "",
 		ownsCar: "",
 		image:"",
-		imageUrl:""
+		imgUrl:""
 	});
 
 	let [auth, setAuth] = useState(false);
@@ -53,13 +48,19 @@ export default function Signup() {
 		formdata.append('image',image)
 
 		console.log(formdata)
+
+		for (var key of formdata.entries()) {
+        console.log(key[0] + ', ' + key[1]);
+    }
+
+
 		console.log(image)
 		axios({
 			method: "post",
 			url: "/signup",
-			data: fields,
+			data: formdata
 		}).then((res) => {
-			if (res.data.auth) {
+			if (res.data.status) {
 				console.log("yay");
 				setAuth(true);
 			} else {
@@ -77,6 +78,7 @@ export default function Signup() {
 							type="file"
 							id={styles.image}
 							onChange={imageOnChange}
+							required="required"
 						/>
 						<label for={styles.image}>
 							<img
@@ -97,6 +99,7 @@ export default function Signup() {
 						setFields({ ...fields, name: e.target.value })
 					}
 					label="Name"
+					required
 				/>
 				<TextField
 					fullWidth
@@ -106,6 +109,7 @@ export default function Signup() {
 						setFields({ ...fields, email: e.target.value })
 					}
 					label="Email"
+					required
 				/>
 				<TextField
 					fullWidth
@@ -115,6 +119,8 @@ export default function Signup() {
 						setFields({ ...fields, password: e.target.value })
 					}
 					label="Password"
+					type="password"
+					required
 				/>
 				<TextField
 					fullWidth
@@ -124,11 +130,13 @@ export default function Signup() {
 						setFields({ ...fields, address: e.target.value })
 					}
 					label="Address"
+					required
 				/>
 				<FormControl
 					variant="outlined"
 					fullWidth
 					className={styles.formField}
+					required
 				>
 					<InputLabel id="demo-simple-select-outlined-label">
 						Do you own a car?
@@ -141,6 +149,7 @@ export default function Signup() {
 							setFields({ ...fields, ownsCar: e.target.value })
 						}
 						label="Do you own a car?"
+						required
 					>
 						<MenuItem value={true}>Yes</MenuItem>
 						<MenuItem value={false}>No</MenuItem>

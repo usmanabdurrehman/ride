@@ -33,9 +33,9 @@ export default function Home() {
 	}, []);
 
 	return (
-		<Layout>
+		<Layout home>
 			<Card>
-				<h2>Welcome {user.name}</h2>
+				<h1>Welcome {user.name}</h1>
 				<div className={styles.badges}>
 					{user.isMember && (
 						<img

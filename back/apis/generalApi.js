@@ -10,8 +10,6 @@ var storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
   	let [filename,ext] = file.originalname.split('.')
-  	console.log(file)
-  	console.log(req.body)
   	req.filename = `${req.body.email}.${ext}`
     cb(null, req.filename)
   }
@@ -26,8 +24,7 @@ router.post('/signin',(req,res)=>{
 	User.findOne({email}).lean()
 	.then(user=>{
 		if(user){
-			if(bcrypt.compareSync(password, user.password)){
-				delete user.password
+			if(password==user.password){
 				jwt.sign(user,'secret',(err,token)=>{
 					if(err) return res.send({auth:false})
 					return res.send({auth:true,user,token})
@@ -46,8 +43,6 @@ router.post('/signin',(req,res)=>{
 // tested
 router.post('/signup',upload.any(),(req,res)=>{
 	let {name,password,email,ownsCar,address} = req.body
-	var salt = bcrypt.genSaltSync(10);
-	var hash = bcrypt.hashSync(password, salt);
 
 	console.log(req.filename)
 
@@ -55,7 +50,7 @@ router.post('/signup',upload.any(),(req,res)=>{
 		name,
 		email,
 		address,
-		password:hash,
+		password,
 		isMember:ownsCar,
 		image:req.filename
 	})

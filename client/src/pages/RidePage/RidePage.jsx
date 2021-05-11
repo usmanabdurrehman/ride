@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import styles from "./RidePage.module.css";
-import { Container, Card } from "../../Components";
+import { Container, Card, Card2 } from "../../Components";
+
+import Layout from "../../Layout/Layout";
 
 import { Link, useParams } from "react-router-dom";
 
-import moment from 'moment'
+import moment from "moment";
 
-import axios from 'axios'
+import axios from "axios";
+
+import Fab from "@material-ui/core/Fab";
+
+import DriveEtaIcon from "@material-ui/icons/DriveEta";
 
 export default function RidePage() {
 	let { id } = useParams();
@@ -20,7 +26,7 @@ export default function RidePage() {
 
 	useEffect(() => {
 		axios({
-			method:'post',
+			method: "post",
 			url: "/user/getRide",
 			withCredentials: true,
 			data: { id },
@@ -30,14 +36,18 @@ export default function RidePage() {
 			}
 		});
 	}, []);
-	console.log(ride.start && new Date(ride.start).getFullYear())
+
+	let clickHandler = () => {
+
+	}
+
 	return (
 		<Container className={styles.ride}>
 			<Card>
 				<h1>Ride Detail</h1>
 				<p>Ride ID: {id}</p>
 			</Card>
-			<div className={styles.rideInfo}>
+			<Card2>
 				<h2>Route</h2>
 				<p>From: {ride.from}</p>
 				<p>To: {ride.to}</p>
@@ -45,14 +55,29 @@ export default function RidePage() {
 				<div className={styles.seperator}></div>
 
 				<h2>Time</h2>
-				<p>Start: {ride.start ? moment(ride.start).format("DD MMMM, YYYY | HH:mm:ss") : ""}</p>
-				<p>End: {ride.end ? moment(ride.end).format("DD MMMM, YYYY | HH:mm:ss") : ""}</p>
+				<p>
+					Start:{" "}
+					{ride.start
+						? moment(ride.start).format("DD MMMM, YYYY | HH:mm:ss")
+						: ""}
+				</p>
+				<p>
+					End:{" "}
+					{ride.end
+						? moment(ride.end).format("DD MMMM, YYYY | HH:mm:ss")
+						: ""}
+				</p>
 
 				<div className={styles.seperator}></div>
 
 				<h2>CarPooling Participants</h2>
-				{ride.carPoolingParticipants.map(part=><p>{part}</p>)}
-			</div>
+				{ride.carPoolingParticipants.map((part) => (
+					<p>{part}</p>
+				))}
+			</Card2>
+			<Fab color="secondary" className={styles.fab} onClick={clickHandler}>
+				<DriveEtaIcon/>
+			</Fab>
 		</Container>
 	);
 }

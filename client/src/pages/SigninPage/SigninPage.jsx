@@ -51,6 +51,7 @@ export default function Signin() {
 						setFields({ ...fields, email: e.target.value })
 					}
 					label="Email"
+					required
 				/>
 				<TextField
 					fullWidth
@@ -60,12 +61,14 @@ export default function Signin() {
 						setFields({ ...fields, password: e.target.value })
 					}
 					label="Password"
+					type="password"
+					required
 				/>
 				<Button fullWidth className={styles.formButton} type="submit" color="primary" variant="contained">
 					Sign In
 				</Button>
 			</form>
-			{auth && <Redirect to="/home"/>}
+			{auth && <Redirect to="/"/>}
 		</Container>
 	);
 }
