@@ -44,7 +44,7 @@ router.post('/signin',(req,res)=>{
 router.post('/signup',upload.any(),(req,res)=>{
 	let {name,password,email,ownsCar,address} = req.body
 
-	console.log(req.filename)
+	console.log(req.filename,req)
 
 	let newUser = new User({
 		name,
