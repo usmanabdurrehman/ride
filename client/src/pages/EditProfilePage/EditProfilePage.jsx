@@ -96,7 +96,7 @@ export default function EditProfile() {
 	};
 
 	return (
-		<Container className={styles.signup}>
+		<Container className={styles.editProfile}>
 			<Card>
 				<h1>Edit Profile</h1>
 			</Card>

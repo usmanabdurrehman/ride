@@ -33,7 +33,7 @@ export default function Home() {
 	}, []);
 
 	return (
-		<Layout home>
+		<Layout page="home">
 			<Card>
 				<h1>Welcome {user.name}</h1>
 				<div className={styles.badges}>

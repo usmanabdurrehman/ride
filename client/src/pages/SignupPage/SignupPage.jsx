@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./SignupPage.module.css";
 import { TextField, Button } from "@material-ui/core";
-import { Container } from "../../Components";
+import { Container, Card2 } from "../../Components";
 import axios from "axios";
 
 import { Redirect } from "react-router-dom";
@@ -14,15 +14,14 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
 export default function Signup() {
-
 	let [fields, setFields] = useState({
 		name: "",
 		email: "",
 		password: "",
 		address: "",
 		ownsCar: "",
-		image:"",
-		imgUrl:""
+		image: "",
+		imgUrl: "",
 	});
 
 	let [auth, setAuth] = useState(false);
@@ -37,28 +36,27 @@ export default function Signup() {
 	let submitHandler = (e) => {
 		e.preventDefault();
 
-		let {name,email,password,address,ownsCar,image} = fields
+		let { name, email, password, address, ownsCar, image } = fields;
 
-		let formdata = new FormData()
-		formdata.append('name',name)
-		formdata.append('email',email)
-		formdata.append('password',password)
-		formdata.append('address',address)
-		formdata.append('ownsCar',ownsCar)
-		formdata.append('image',image)
+		let formdata = new FormData();
+		formdata.append("name", name);
+		formdata.append("email", email);
+		formdata.append("password", password);
+		formdata.append("address", address);
+		formdata.append("ownsCar", ownsCar);
+		formdata.append("image", image);
 
-		console.log(formdata)
+		console.log(formdata);
 
 		for (var key of formdata.entries()) {
-        console.log(key[0] + ', ' + key[1]);
-    }
+			console.log(key[0] + ", " + key[1]);
+		}
 
-
-		console.log(image)
+		console.log(image);
 		axios({
 			method: "post",
 			url: "/signup",
-			data: formdata
+			data: formdata,
 		}).then((res) => {
 			if (res.data.status) {
 				console.log("yay");
@@ -71,100 +69,106 @@ export default function Signup() {
 
 	return (
 		<Container className={styles.signup}>
-			<form className={styles.signinForm} onSubmit={submitHandler}>
-				<div className={styles.profileImageWrapper}>
-					<div className={styles.fileWrapper}>
-						<input
-							type="file"
-							id={styles.image}
-							onChange={imageOnChange}
-							required="required"
-						/>
-						<label for={styles.image}>
-							<img
-								src={
-									fields.imgUrl
-										? fields.imgUrl
-										: "default.jpg"
-								}
+			<h1 className={styles.logo}>Ride.</h1>
+			<Card2>
+				<form className={styles.signinForm} onSubmit={submitHandler}>
+					<div className={styles.profileImageWrapper}>
+						<div className={styles.fileWrapper}>
+							<input
+								type="file"
+								id={styles.image}
+								onChange={imageOnChange}
+								required="required"
 							/>
-						</label>
+							<label for={styles.image}>
+								<img
+									src={
+										fields.imgUrl
+											? fields.imgUrl
+											: "default.jpg"
+									}
+								/>
+							</label>
+						</div>
 					</div>
-				</div>
-				<TextField
-					fullWidth
-					className={styles.formField}
-					variant="outlined"
-					onChange={(e) =>
-						setFields({ ...fields, name: e.target.value })
-					}
-					label="Name"
-					required
-				/>
-				<TextField
-					fullWidth
-					className={styles.formField}
-					variant="outlined"
-					onChange={(e) =>
-						setFields({ ...fields, email: e.target.value })
-					}
-					label="Email"
-					required
-				/>
-				<TextField
-					fullWidth
-					className={styles.formField}
-					variant="outlined"
-					onChange={(e) =>
-						setFields({ ...fields, password: e.target.value })
-					}
-					label="Password"
-					type="password"
-					required
-				/>
-				<TextField
-					fullWidth
-					className={styles.formField}
-					variant="outlined"
-					onChange={(e) =>
-						setFields({ ...fields, address: e.target.value })
-					}
-					label="Address"
-					required
-				/>
-				<FormControl
-					variant="outlined"
-					fullWidth
-					className={styles.formField}
-					required
-				>
-					<InputLabel id="demo-simple-select-outlined-label">
-						Do you own a car?
-					</InputLabel>
-					<Select
-						labelId="demo-simple-select-outlined-label"
-						id="demo-simple-select-outlined"
-						value={fields.ownsCar}
+					<TextField
+						fullWidth
+						className={styles.formField}
+						variant="outlined"
 						onChange={(e) =>
-							setFields({ ...fields, ownsCar: e.target.value })
+							setFields({ ...fields, name: e.target.value })
 						}
-						label="Do you own a car?"
+						label="Name"
+						required
+					/>
+					<TextField
+						fullWidth
+						className={styles.formField}
+						variant="outlined"
+						onChange={(e) =>
+							setFields({ ...fields, email: e.target.value })
+						}
+						label="Email"
+						required
+					/>
+					<TextField
+						fullWidth
+						className={styles.formField}
+						variant="outlined"
+						onChange={(e) =>
+							setFields({ ...fields, password: e.target.value })
+						}
+						label="Password"
+						type="password"
+						required
+					/>
+					<TextField
+						fullWidth
+						className={styles.formField}
+						variant="outlined"
+						onChange={(e) =>
+							setFields({ ...fields, address: e.target.value })
+						}
+						label="Address"
+						required
+					/>
+					<FormControl
+						variant="outlined"
+						fullWidth
+						className={styles.formField}
 						required
 					>
-						<MenuItem value={true}>Yes</MenuItem>
-						<MenuItem value={false}>No</MenuItem>
-					</Select>
-				</FormControl>
-				<Button
-					fullWidth
-					className={styles.formButton}
-					type="submit"
-					color="primary"
-					variant="contained"
-				>
-					Sign Up
-				</Button>
-			</form>
+						<InputLabel id="demo-simple-select-outlined-label">
+							Do you own a car?
+						</InputLabel>
+						<Select
+							labelId="demo-simple-select-outlined-label"
+							id="demo-simple-select-outlined"
+							value={fields.ownsCar}
+							onChange={(e) =>
+								setFields({
+									...fields,
+									ownsCar: e.target.value,
+								})
+							}
+							label="Do you own a car?"
+							required
+						>
+							<MenuItem value={true}>Yes</MenuItem>
+							<MenuItem value={false}>No</MenuItem>
+						</Select>
+					</FormControl>
+					<Button
+						fullWidth
+						className={styles.formButton}
+						type="submit"
+						color="primary"
+						variant="contained"
+					>
+						Sign Up
+					</Button>
+				</form>
+			</Card2>
 			{auth && <Redirect to="/home" />}
 		</Container>
 	);

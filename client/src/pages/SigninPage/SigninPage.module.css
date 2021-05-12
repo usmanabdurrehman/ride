@@ -1,6 +1,8 @@
 .signin{
 	display: flex;
 	align-items: center;
+	justify-content: center;
+	flex-direction: column;
 	height: 100vh;
 }
 
@@ -8,8 +10,12 @@
 	margin:8px 0 !important;
 }
 
-
 .formButton{
 	margin:8px 0 !important;
 	height:56px
+}
+
+.logo{
+	color:purple;
+	margin:8px 0;
 }

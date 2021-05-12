@@ -32,9 +32,9 @@ export default function JoinRidePage() {
 	}, []);
 
 	return (
-		<Container>
+		<Container className={styles.joinRide}>
 			<Card>
-				<h2>Join a Ride</h2>
+				<h1>Join a Ride</h1>
 			</Card>
 			<div className={styles.joinARide}>
 				{canCarPool == true ? (
