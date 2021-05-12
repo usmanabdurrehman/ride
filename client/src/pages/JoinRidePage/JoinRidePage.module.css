@@ -1,0 +1,11 @@
+.joinRide{
+	padding-top: 10px;
+}
+
+.joinARide{
+	margin-top: 25px;
+}
+
+.rides>div+div{
+	margin-top: 10px;
+}

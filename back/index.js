@@ -22,6 +22,7 @@ app.use('/user',(req,res,next)=>{
 		jwt.verify(token,'secret',(err,decoded)=>{
 			if(err) return res.sendStatus(403)
 			req.user = decoded
+			console.log(req.user)
 			return next()
 		})
 	}

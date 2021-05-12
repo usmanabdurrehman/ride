@@ -16,3 +16,13 @@
 	height:4px;
 	border-radius: 4px 4px 0 0;
 }
+
+.fab{
+	position: fixed !important;
+	bottom:20px;
+	right:20px;
+}
+
+.skeleton{
+	margin:10px 0;
+}

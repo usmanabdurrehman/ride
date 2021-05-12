@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import styles from "./SignupPage.module.css";
+import React, { useState, useEffect } from "react";
+import styles from "./EditProfilePage.module.css";
+
 import { TextField, Button } from "@material-ui/core";
-import { Container, Card2 } from "../../Components";
+import { Container, Card, Card2 } from "../../Components";
 import axios from "axios";
 
 import { Redirect } from "react-router-dom";
@@ -13,18 +14,36 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
-export default function Signup() {
-	let [fields, setFields] = useState({
-		name: "",
-		email: "",
-		password: "",
-		address: "",
-		ownsCar: "",
-		image: "",
-		imgUrl: "",
-	});
+import { useSelector, useDispatch } from "react-redux";
 
-	let [auth, setAuth] = useState(false);
+import Skeleton from "react-loading-skeleton";
+
+export default function EditProfile() {
+
+	const id = useSelector(state=>state.user)._id
+
+	const [fields, setFields] = useState(null);
+
+	const dispatch = useDispatch()
+
+	useEffect(() => {
+		axios({
+			url: "/user/getUser",
+			method: "post",
+			data: { id },
+			withCredentials: true,
+		}).then((res) => {
+			if (res.data.status) {
+				setFields({
+					...res.data.user,
+					imgUrl: "",
+					ownsCar: res.data.user.isMember,
+				});
+			}
+		});
+	}, []);
+
+	let [status, setStatus] = useState(false);
 
 	let imageOnChange = (e) => {
 		if (e.target.files[0]) {
@@ -36,7 +55,16 @@ export default function Signup() {
 	let submitHandler = (e) => {
 		e.preventDefault();
 
-		let { name, email, password, address, ownsCar, image } = fields;
+		let {
+			_id,
+			name,
+			email,
+			password,
+			address,
+			ownsCar,
+			image,
+			bio,
+		} = fields;
 
 		let formdata = new FormData();
 		formdata.append("name", name);
@@ -44,23 +72,23 @@ export default function Signup() {
 		formdata.append("password", password);
 		formdata.append("address", address);
 		formdata.append("ownsCar", ownsCar);
+		formdata.append("bio", bio);
 		formdata.append("image", image);
+		formdata.append("id", _id);
 
 		console.log(formdata);
-
-		for (var key of formdata.entries()) {
-			console.log(key[0] + ", " + key[1]);
-		}
-
 		console.log(image);
 		axios({
 			method: "post",
-			url: "/signup",
+			url: "/user/updateUser",
 			data: formdata,
+			withCredentials: true,
 		}).then((res) => {
 			if (res.data.status) {
+				dispatch({type:'SET_USER',payload:res.data.user})
 				console.log("yay");
-				setAuth(true);
+				console.log(res.data)
+				setStatus(true);
 			} else {
 				console.log("nay");
 			}
@@ -68,9 +96,11 @@ export default function Signup() {
 	};
 
 	return (
-		<Container className={styles.signup}>
-			<h1 className={styles.logo}>Ride.</h1>
-			<Card2>
+		<Container className={styles.editProfile}>
+			<Card>
+				<h1>Edit Profile</h1>
+			</Card>
+			{fields ? <Card2>
 				<form className={styles.signinForm} onSubmit={submitHandler}>
 					<div className={styles.profileImageWrapper}>
 						<div className={styles.fileWrapper}>
@@ -78,13 +108,12 @@ export default function Signup() {
 								type="file"
 								id={styles.image}
 								onChange={imageOnChange}
-								required="required"
 							/>
 							<label for={styles.image}>
 								<img
 									src={
-										fields.imgUrl
-											? fields.imgUrl
+										fields.imgUrl || fields.image
+											? fields.imgUrl || (fields.image ? `http://localhost:7000/profileImages/${fields.image}` : null)
 											: "default.jpg"
 									}
 								/>
@@ -95,48 +124,59 @@ export default function Signup() {
 						fullWidth
 						className={styles.formField}
 						variant="outlined"
+						value={fields.name}
 						onChange={(e) =>
 							setFields({ ...fields, name: e.target.value })
 						}
 						label="Name"
-						required
 					/>
 					<TextField
 						fullWidth
 						className={styles.formField}
 						variant="outlined"
+						value={fields.email}
 						onChange={(e) =>
 							setFields({ ...fields, email: e.target.value })
 						}
 						label="Email"
-						required
 					/>
 					<TextField
 						fullWidth
 						className={styles.formField}
 						variant="outlined"
+						value={fields.password}
 						onChange={(e) =>
 							setFields({ ...fields, password: e.target.value })
 						}
 						label="Password"
 						type="password"
-						required
 					/>
 					<TextField
 						fullWidth
 						className={styles.formField}
+						value={fields.address}
 						variant="outlined"
 						onChange={(e) =>
 							setFields({ ...fields, address: e.target.value })
 						}
 						label="Address"
-						required
+					/>
+					<TextField
+						fullWidth
+						className={styles.formField}
+						value={fields?.bio}
+						variant="outlined"
+						multiline
+						rows={4}
+						onChange={(e) =>
+							setFields({ ...fields, bio: e.target.value })
+						}
+						label="Bio"
 					/>
 					<FormControl
 						variant="outlined"
 						fullWidth
 						className={styles.formField}
-						required
 					>
 						<InputLabel id="demo-simple-select-outlined-label">
 							Do you own a car?
@@ -152,7 +192,6 @@ export default function Signup() {
 								})
 							}
 							label="Do you own a car?"
-							required
 						>
 							<MenuItem value={true}>Yes</MenuItem>
 							<MenuItem value={false}>No</MenuItem>
@@ -165,11 +204,11 @@ export default function Signup() {
 						color="primary"
 						variant="contained"
 					>
-						Sign Up
+						Save
 					</Button>
 				</form>
-			</Card2>
-			{auth && <Redirect to="/home" />}
+			</Card2> : <Skeleton className={styles.skeleton} height={100} />}
+			{status && <Redirect to={`/profile/${id}`} />}
 		</Container>
 	);
 }

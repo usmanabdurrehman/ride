@@ -1,9 +1,5 @@
-.signup{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	min-height: 100vh;
+.editProfile{
+	padding-top: 10px;
 }
 
 .formField{
@@ -59,9 +55,4 @@
 .profileImageWrapper .imageWrapper:hover .absolute{
 	visibility: visible;
 	opacity: 1;
-}
-
-.logo{
-	color:purple;
-	margin:8px 0;
 }
