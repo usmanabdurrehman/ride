@@ -15,6 +15,8 @@ import {
 } from "react-native-paper";
 import useAppContext from "../../hooks/useAppContext";
 // create a component
+import { EventRegister } from "react-native-event-listeners";
+
 const Home = (props) => {
   const [state, setState] = React.useState({ open: false });
 
@@ -25,15 +27,9 @@ const Home = (props) => {
   const { isDarkTheme, setIsDarkTheme } = useAppContext();
   const theme = useTheme();
   console.log(isDarkTheme);
+
   return (
     <View style={{ alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
-      <StatusBar
-        barStyle={isDarkTheme ? "light-content" : "dark-content"}
-        translucent
-        backgroundColor="rgba(255, 255, 255,0)"
-        hidden={false}
-        showHideTransition="fade"
-      />
       <ScrollView
         style={{ flexGrow: 1, width: "100%" }}
         contentContainerStyle={{ alignItems: "center", justifyContent: "center", height: "100%" }}
@@ -51,6 +47,12 @@ const Home = (props) => {
         large
         label={isDarkTheme ? "Dark" : "Light"}
         onPress={() => setIsDarkTheme(!isDarkTheme)}
+        onTouchMove={({ nativeEvent }) => {
+          // console.log(nativeEvent);
+          EventRegister.emit("touchMove", nativeEvent);
+          // fabX.setValue(nativeEvent.pageX);
+          // fabY.setValue(nativeEvent.pageY);
+        }}
       />
     </View>
   );
