@@ -6,7 +6,7 @@ import {
 import { createStackNavigator } from "@react-navigation/stack";
 import merge from "deepmerge";
 import React, { useEffect, useState } from "react";
-import { StatusBar, StyleSheet, View, UIManager, Platform } from "react-native";
+import { StatusBar, StyleSheet, View, UIManager, Platform, LogBox } from "react-native";
 import {
   DarkTheme as PaperDarkTheme,
   DefaultTheme as PaperDefaultTheme,
@@ -18,10 +18,17 @@ import AuthStack from "./src/navigation/auth";
 import UserStack from "./src/navigation/user";
 import Home from "./src/screens/home";
 import * as SplashScreen from "expo-splash-screen";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { EventRegister } from "react-native-event-listeners";
+import SnackbarComponent from "./src/component/snakbar";
 const CombinedDefaultTheme = merge(PaperDefaultTheme, NavigationDefaultTheme);
 const CombinedDarkTheme = merge(PaperDarkTheme, NavigationDarkTheme);
 const Stack = createStackNavigator();
+axios.defaults.baseURL = "http://dry-bayou-84082.herokuapp.com";
+
+LogBox.ignoreAllLogs();
 if (Platform.OS === "android") {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -31,6 +38,8 @@ interface Root {
   state: boolean;
 }
 const RootApp = ({ state }: Root) => {
+  const { theme, setToken, setUserObject, token } = useAppContext();
+
   const [appIsReady, setAppIsReady] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   useEffect(() => {
@@ -38,6 +47,13 @@ const RootApp = ({ state }: Root) => {
       try {
         // Keep the splash screen visible while we fetch resources
         await SplashScreen.preventAutoHideAsync();
+        let res = await AsyncStorage.getItem("userObject");
+        if (res) {
+          let data = JSON.parse(res);
+          console.log(data);
+          setToken(data.token);
+          setUserObject(data.user);
+        }
         // Pre-load fonts, make any API calls you need to do here
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
@@ -45,6 +61,7 @@ const RootApp = ({ state }: Root) => {
         console.warn(e);
       } finally {
         // Tell the application to render
+
         setAppIsReady(true);
         await SplashScreen.hideAsync();
       }
@@ -52,7 +69,12 @@ const RootApp = ({ state }: Root) => {
 
     prepare();
   }, []);
-
+  React.useEffect(() => {
+    let listener = EventRegister.addEventListener("authStatus", (data) => {
+      setIsLoggedIn(data);
+    });
+    return () => listener;
+  }, []);
   if (!appIsReady) {
     return null;
   }
@@ -60,7 +82,7 @@ const RootApp = ({ state }: Root) => {
   return (
     <PaperProvider theme={state ? CombinedDarkTheme : CombinedDefaultTheme}>
       <NavigationContainer theme={state ? CombinedDarkTheme : CombinedDefaultTheme}>
-        {isLoggedIn ? <UserStack /> : <AuthStack />}
+        {token ? <UserStack /> : <AuthStack />}
       </NavigationContainer>
     </PaperProvider>
   );
@@ -79,6 +101,7 @@ export default function App() {
       />
       <View style={{ height: StatusBar.currentHeight, width: "100%" }} />
       <RootApp state={isDarkTheme} />
+      <SnackbarComponent />
     </AppContextProvider>
   );
 }

@@ -8,12 +8,26 @@ const AppContext = React.createContext<AppContextTypes>({
     throw new Error("Not implemented");
   },
   theme: Colors.light,
+  token: "",
+  setToken: () => {
+    throw new Error("Not implemented");
+  },
+  userObject: { email: "", image: "", isMember: false, name: "" },
+  setUserObject: () => {
+    throw new Error("Not implemented");
+  },
 });
 
 export const AppContextProvider: React.FC = ({ children }) => {
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
   const theme = Colors[isDarkTheme ? "dark" : "light"];
-  return <AppContext.Provider value={{ isDarkTheme, setIsDarkTheme, theme }}>{children}</AppContext.Provider>;
+  const [token, setToken] = React.useState("");
+  const [userObject, setUserObject] = React.useState({});
+  return (
+    <AppContext.Provider value={{ isDarkTheme, setIsDarkTheme, theme, token, setToken, userObject, setUserObject }}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 export default AppContext;

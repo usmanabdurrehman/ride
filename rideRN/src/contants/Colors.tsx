@@ -1,7 +1,8 @@
-const tintColorLight = "#2f95dc";
+const tintColorLight = "purple";
 const tintColorDark = "#fff";
 export interface IColor {
   text: string;
+  tintText: string;
   background: string;
   tint: string;
   tabIconDefault: string;
@@ -9,15 +10,17 @@ export interface IColor {
 }
 const Colors = {
   light: {
-    text: "#000",
+    text: "#fff",
+    tintText: "#000",
     background: "#fff",
     tint: tintColorLight,
     tabIconDefault: "#ccc",
     tabIconSelected: tintColorLight,
   },
   dark: {
-    text: "#fff",
-    background: "#000",
+    text: "#000",
+    tintText: "#fff",
+    background: "#021",
     tint: tintColorDark,
     tabIconDefault: "#ccc",
     tabIconSelected: tintColorDark,

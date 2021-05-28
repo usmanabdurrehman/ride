@@ -1,22 +1,10 @@
 //import liraries
 import React from "react";
-import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import {
-  Avatar,
-  Card,
-  FAB,
-  Paragraph,
-  Portal,
-  Switch,
-  Text,
-  Title,
-  TouchableRipple,
-  useTheme,
-} from "react-native-paper";
+import { ScrollView, StyleSheet, View, FlatList } from "react-native";
+import { Card, FAB, Portal, Title, useTheme } from "react-native-paper";
+import { heightRef, widthRef } from "../../contants/screenSize";
 import useAppContext from "../../hooks/useAppContext";
-// create a component
-import { EventRegister } from "react-native-event-listeners";
-
+import { MaterialIcons } from "@expo/vector-icons";
 const Home = (props) => {
   const [state, setState] = React.useState({ open: false });
 
@@ -24,34 +12,127 @@ const Home = (props) => {
 
   const { open } = state;
 
-  const { isDarkTheme, setIsDarkTheme } = useAppContext();
+  const { isDarkTheme, setIsDarkTheme, theme: globalTheme, userObject } = useAppContext();
   const theme = useTheme();
   console.log(isDarkTheme);
-
+  const [data, setData] = React.useState([]);
   return (
-    <View style={{ alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
+    <View
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+        backgroundColor: globalTheme.background,
+      }}
+    >
       <ScrollView
         style={{ flexGrow: 1, width: "100%" }}
-        contentContainerStyle={{ alignItems: "center", justifyContent: "center", height: "100%" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          paddingVertical: 20 * heightRef,
+        }}
       >
-        <Card style={{ marginVertical: 10, width: "80%", height: "50%", borderRadius: 10, alignItems: "center" }}>
-          <Card.Content>
-            <Avatar.Text size={50} label="XD" />
-            <Title>Card title</Title>
-            <Paragraph>Card content</Paragraph>
+        <Card
+          elevation={10}
+          style={{
+            borderTopLeftRadius: 20,
+            borderBottomRightRadius: 20,
+            width: "90%",
+            justifyContent: "center",
+            overflow: "hidden",
+            backgroundColor: globalTheme.tint,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 20 * heightRef }}>
+            <Title style={{ color: globalTheme.text, fontSize: 30 * heightRef }}>Welcome {userObject.name}</Title>
           </Card.Content>
         </Card>
+
+        <View style={{ flex: 1, width: "100%", padding: 20 * widthRef }}>
+          <Title style={{ color: globalTheme.tintText, fontSize: 30 * heightRef, fontWeight: "bold" }}>
+            Your Previous Rides
+          </Title>
+          <FlatList
+            data={data}
+            keyExtractor={(_, index) => index.toString()}
+            style={{ width: "100%" }}
+            ListEmptyComponent={() => (
+              <Title style={{ color: globalTheme.tintText, fontSize: 30 * heightRef }}>
+                You haven't booked any rides yet
+              </Title>
+            )}
+            contentContainerStyle={{ width: "100%", flexGrow: 1, paddingVertical: 20 * heightRef }}
+            renderItem={({ item, index }) => {
+              return (
+                <Card
+                  key={index}
+                  elevation={10}
+                  style={{
+                    borderTopLeftRadius: 8,
+                    borderBottomRightRadius: 8,
+                    width: "100%",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    backgroundColor: "orange",
+                  }}
+                >
+                  <Card.Content
+                    style={{
+                      paddingVertical: 10 * heightRef,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <View>
+                      <Title style={{ color: globalTheme.text, fontSize: 20 * heightRef }}>From: Welcome ali</Title>
+                      <Title style={{ color: globalTheme.text, fontSize: 20 * heightRef }}>To: Welcome ali</Title>
+                    </View>
+                    <MaterialIcons name="keyboard-arrow-right" size={30 * heightRef} color="white" />
+                  </Card.Content>
+                </Card>
+              );
+            }}
+          />
+        </View>
       </ScrollView>
-      <FAB
+      <FAB.Group
+        open={open}
         style={styles.fab}
-        large
-        label={isDarkTheme ? "Dark" : "Light"}
-        onPress={() => setIsDarkTheme(!isDarkTheme)}
-        onTouchMove={({ nativeEvent }) => {
-          // console.log(nativeEvent);
-          EventRegister.emit("touchMove", nativeEvent);
-          // fabX.setValue(nativeEvent.pageX);
-          // fabY.setValue(nativeEvent.pageY);
+        icon={open ? "close" : "plus"}
+        actions={[
+          {
+            icon: !isDarkTheme ? "brightness-3" : "brightness-7",
+            label: !isDarkTheme ? "Dark" : "Light",
+            onPress: () => setIsDarkTheme((state) => !state),
+          },
+          {
+            icon: "face",
+            label: "Profile",
+            onPress: () => {
+              onStateChange({ open: false });
+              props.navigation.navigate("Profile");
+            },
+          },
+          {
+            icon: "car",
+            label: "Ride",
+            onPress: () => {
+              onStateChange({ open: false });
+              props.navigation.navigate("Ride");
+            },
+
+            small: false,
+          },
+        ]}
+        onStateChange={onStateChange}
+        onPress={() => {
+          if (open) {
+            // do something if the speed dial is open
+          }
         }}
       />
     </View>
@@ -73,7 +154,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "center",
   },
-  fab: { position: "absolute", margin: 16, right: 0, bottom: 0 },
+  fab: { position: "absolute", right: 0, bottom: 0 },
 });
 
 //make this component available to the app

@@ -1,5 +1,5 @@
 import React from "react";
-import { Control, Controller, FieldValues, FormState, Validate } from "react-hook-form";
+import { Control, Controller, FieldValues, FormState, Validate, ValidationRule } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-paper";
 import { LayoutAnimationConfigure } from "../../../contants/functions";
@@ -9,7 +9,7 @@ interface Props {
   control: Control<FieldValues>;
   formState: FormState<FieldValues>;
   name: string;
-  rules?: object;
+  rules?: any;
   label: string;
 }
 const InputControlComponent = ({ control, formState, name, rules, label }: Props) => {
